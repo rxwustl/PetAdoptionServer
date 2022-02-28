@@ -87,8 +87,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # database is set to mysql
         'NAME': 'pet_server',
-        'USER': 'module7_server',
-        'PASSWORD': 'xuran123',
+        'USER': 'pet_adoption_server_admin',
+        'PASSWORD': '7G_#z(P+Wu2fH>E=Gqwq',
         'HOST': 'localhost'
     }
 }
