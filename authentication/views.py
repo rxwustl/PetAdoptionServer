@@ -1,12 +1,14 @@
-from rest_framework import response, status
+from rest_framework import response, status, permissions
 from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
 from django.contrib.auth import authenticate
 
 from .serializer import LoginSerializer, RegisterSerializer
 
+
 class RegisterAPIView(GenericAPIView):
 
+    authentication_classes = []
     serializer_class = RegisterSerializer
 
     def post(self, request):
@@ -23,6 +25,7 @@ class RegisterAPIView(GenericAPIView):
 
 class LoginAPIView(GenericAPIView):
 
+    authentication_classes = []
     serializer_class = LoginSerializer
 
     def post(self, request):

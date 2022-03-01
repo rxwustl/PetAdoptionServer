@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 # Create your models here.
 
 class PetUserManager(UserManager):
-    def _create_user(self, username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state):
+    def _create_user(self, username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state, city):
         """
         Create and save a user with the given username, email, and password.
         """
@@ -24,15 +24,15 @@ class PetUserManager(UserManager):
         # managers are by definition working on the real model.
         username = self.model.normalize_username(username)
         email = self.normalize_email(email)
-        user = self.model(username=username, email=email, addressLine1=addressLine1, addressLine2=addressLine2, zipcode=zipcode, state=state, first_name=first_name, last_name=last_name, displayname=displayname)
+        user = self.model(username=username, email=email, addressLine1=addressLine1, addressLine2=addressLine2, zipcode=zipcode, state=state, first_name=first_name, last_name=last_name, displayname=displayname, city=city)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state, **extra_fields):
+    def create_user(self, username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state, city, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state)
+        return self._create_user(username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state, city)
 
     def create_superuser(self, username, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -71,6 +71,7 @@ class User(AbstractUser):
     addressLine2 = models.CharField(max_length=256)
     zipcode = models.CharField(max_length=6)
     state = models.CharField(max_length=2)
+    city = models.CharField(max_length=64, default='')
 
     @property
     def token(self):
