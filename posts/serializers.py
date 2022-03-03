@@ -45,6 +45,7 @@ class FavoriteListSerializer(serializers.ModelSerializer):
         model = Favorites
         fields = ('posts', 'postid',)
         depth = 2
+        write_only_fields = ['postid']
 
 
 
