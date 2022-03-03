@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser, UserManager, AbstractBaseUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext_lazy as _
 import jwt
@@ -45,7 +45,7 @@ class PetUserManager(UserManager):
     pass
 
 
-class User(AbstractUser):
+class User(AbstractBaseUser):
     email = models.EmailField(_('email address'), blank=False, unique=True)
     userid = models.AutoField(primary_key=True)
     full_name = models.CharField(_('full_name'), max_length=150, blank=False, default="")
