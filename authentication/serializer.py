@@ -11,7 +11,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'full_name', 'displayname', 'addressLine', 'zipcode', 'state', 'city')
+        fields = ('password', 'email', 'full_name', 'displayname', 'addressLine', 'zipcode', 'state', 'city')
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -20,5 +20,5 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'token')
+        fields = ('password', 'token')
         read_only_fields = ['token']
