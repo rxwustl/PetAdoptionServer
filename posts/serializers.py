@@ -40,10 +40,11 @@ class QueryPostSerializer(serializers.ModelSerializer):
 class FavoriteListSerializer(serializers.ModelSerializer):
 
     # userid = serializers.IntegerField(write_only=True)
-    posts = PetPostSerializer(many=True)
-
+    posts = PetPostSerializer(many=True, read_only=True)
+    postid = serializers.CharField(write_only=True)
     class Meta:
         model = Favorites
-        fields = ('posts',)
+        fields = ('posts', 'postid',)
+
 
 
