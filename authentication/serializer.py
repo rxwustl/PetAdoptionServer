@@ -16,9 +16,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=128, write_only=True)
-    username = serializers.CharField(max_length=128, write_only=True)
+    email = serializers.CharField(max_length=128, write_only=True)
 
     class Meta:
         model = User
-        fields = ('password', 'token')
+        fields = ('email', 'password', 'token')
         read_only_fields = ['token']
