@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 # Create your models here.
 
 class PetUserManager(UserManager):
-    def _create_user(self, username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state, city):
+    def _create_user(self, username, email, password, full_name, displayname, addressLine, zipcode, state, city):
         """
         Create and save a user with the given username, email, and password.
         """
@@ -24,15 +24,15 @@ class PetUserManager(UserManager):
         # managers are by definition working on the real model.
         username = self.model.normalize_username(username)
         email = self.normalize_email(email)
-        user = self.model(username=username, email=email, addressLine1=addressLine1, addressLine2=addressLine2, zipcode=zipcode, state=state, first_name=first_name, last_name=last_name, displayname=displayname, city=city)
+        user = self.model(username=username, email=email, addressLine=addressLine, zipcode=zipcode, state=state, full_name=full_name, displayname=displayname, city=city)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state, city, **extra_fields):
+    def create_user(self, username, email, password, full_name, displayname, addressLine, zipcode, state, city, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(username, email, password, first_name, last_name, displayname, addressLine1, addressLine2, zipcode, state, city)
+        return self._create_user(username, email, password, full_name, displayname, addressLine, zipcode, state, city)
 
     def create_superuser(self, username, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -63,12 +63,10 @@ class User(AbstractUser):
             'unique': _("A user with that username already exists."),
         },
     )
-    first_name = models.CharField(_('first name'), max_length=150, blank=False, default="")
-    last_name = models.CharField(_('last name'), max_length=150, blank=False, default="")
-    displayname = models.CharField(_('displayname'), max_length=150, blank=False, default="")
+    full_name = models.CharField(_('full_name'), max_length=150, blank=False, default="")
+    displayname = models.CharField(_('displayname'), max_length=150, blank=True, default="")
     email = models.EmailField(_('email address'), blank=False, default="")
-    addressLine1 = models.CharField(max_length=256)
-    addressLine2 = models.CharField(max_length=256)
+    addressLine = models.CharField(max_length=256)
     zipcode = models.CharField(max_length=6)
     state = models.CharField(max_length=2)
     city = models.CharField(max_length=64, default='')

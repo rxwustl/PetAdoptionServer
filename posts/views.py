@@ -1,9 +1,12 @@
 from rest_framework import response, status
-from rest_framework.generics import CreateAPIView, ListCreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Pet, PetPost
+from rest_framework.parsers import MultiPartParser, FormParser
 
-from .serializers import PetPostSerializer, PetSerializer, QueryPostSerializer
+from posts.parsers import MultipartPostParser
+from .models import Favorites, Pet, PetPost
+
+from .serializers import FavoriteListSerializer, PetPostSerializer, PetSerializer, QueryPostSerializer
 
 
 class MyPetAPIView(ListCreateAPIView):
@@ -20,9 +23,11 @@ class MyPetAPIView(ListCreateAPIView):
 class MyPostsAPIView(ListCreateAPIView):
     serializer_class = PetPostSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
-        return serializer.save()
+        pet = Pet.objects.get(petid=int(self.request.data['petid']))
+        return serializer.save(petid=pet)
 
     def get_queryset(self):
         return PetPost.objects.get_queryset()
@@ -30,6 +35,7 @@ class MyPostsAPIView(ListCreateAPIView):
 class PostsAPIView(ListCreateAPIView):
     serializer_class = PetPostSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         return PetPost.objects.get_queryset()
@@ -37,10 +43,29 @@ class PostsAPIView(ListCreateAPIView):
 class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = QueryPostSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
     lookup_field = 'postid'
 
     def get_queryset(self):
         return PetPost.objects.all()
-
     
+    def perform_destroy(self, instance):
+        instance.delete()
+        
 
+class FavoritesAPIView(ListAPIView):
+
+    serializer_class = FavoriteListSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'userid'
+
+    def get_queryset(self):
+        return Favorites.objects.all()
+    
+class AddFavoritesAPIView(CreateAPIView):
+
+    serializer_class = FavoriteListSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def perform_create(self, serializer):
+        return serializer.save(userid=self.request.user)

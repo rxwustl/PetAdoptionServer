@@ -1,5 +1,6 @@
+from django.forms import ImageField
 from rest_framework import serializers
-from .models import Pet, PetPost
+from .models import Favorites, Pet, PetPost
 
 class PetSerializer(serializers.ModelSerializer):
 
@@ -16,14 +17,16 @@ class PetSerializer(serializers.ModelSerializer):
             "petid"
         ]
         read_only_fields = ['petid']
-        depth=1
+        depth = 1
     pass
 
 class PetPostSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = PetPost
-        fields = ('petid', 'desc', 'postid')
+        fields = ('petid', 'desc', 'postid', 'image')
         read_only_fields = ['postid']
+        depth = 1
 
 class QueryPostSerializer(serializers.ModelSerializer):
 
@@ -31,6 +34,15 @@ class QueryPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PetPost
-        fields = ('petid', 'desc', 'postid', 'pet')
-        depth=1
+        fields = ('petid', 'desc', 'postid', 'pet', 'image')
+        depth = 1
     
+class FavoriteListSerializer(serializers.ModelSerializer):
+
+    # userid = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Favorites
+        fields = ('postid',)
+
+

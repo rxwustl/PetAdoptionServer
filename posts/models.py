@@ -1,6 +1,13 @@
+import uuid
 from django.db import models
 
 from authentication.models import User
+from django.utils.translation import gettext_lazy as _
+
+def upload_to(instance, filename):
+    filename = filename.split('.')
+    filename = filename[0] + '_' + uuid.uuid4().hex + '.' + filename[1]
+    return 'posts/{filename}'.format(filename=filename)
 
 
 class Pet(models.Model):
@@ -19,7 +26,6 @@ class Pet(models.Model):
     birthday = models.DateField()
     neutered = models.BooleanField()
     petowner = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    pass
 
 
 class PetPost(models.Model):
@@ -28,6 +34,9 @@ class PetPost(models.Model):
     desc = models.TextField()
     postid = models.AutoField(primary_key=True)
     closed = models.BooleanField(default=False)
+    image = models.ImageField(
+        _("Image"), upload_to=upload_to, default='posts/default.jpg')
+    pass
 
 class Favorites(models.Model):
     userid = models.ForeignKey(to=User, on_delete=models.CASCADE)
