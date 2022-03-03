@@ -60,7 +60,7 @@ class User(AbstractBaseUser):
     @property
     def token(self):
         token = jwt.encode(
-            {'username': self.username, 'email': self.email, 'exp': datetime.utcnow() + timedelta(days=30)},
+            {'email': self.email, 'exp': datetime.utcnow() + timedelta(days=30)},
             settings.SECRET_KEY,
             algorithm='HS256'
         )
