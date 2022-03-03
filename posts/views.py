@@ -68,4 +68,6 @@ class AddFavoritesAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated]
     
     def perform_create(self, serializer):
-        return serializer.save(userid=self.request.user)
+        postid = self.request.data.get('postid')
+        post = PetPost.objects.get(postid=postid)
+        return serializer.save(userid=self.request.user, postid=post)
