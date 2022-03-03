@@ -17,8 +17,8 @@ class JWTAuthentication(BaseAuthentication):
         
         try:
             decoded_info = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
-            username = decoded_info['username']
-            user = User.objects.get(username=username)
+            email = decoded_info['email']
+            user = User.objects.get(email=email)
             return (user, token)
         except jwt.DecodeError:
             raise exceptions.AuthenticationFailed("Invalid Token")
