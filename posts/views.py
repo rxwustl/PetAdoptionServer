@@ -30,7 +30,7 @@ class MyPostsAPIView(ListCreateAPIView):
         return serializer.save(petid=pet)
 
     def get_queryset(self):
-        return PetPost.objects.filter(petid=Pet.objects.get(userid=self.request.user))
+        return PetPost.objects.filter(petid=Pet.objects.get(petowner=self.request.user))
 
 class PostsAPIView(ListCreateAPIView):
     serializer_class = PetPostSerializer
