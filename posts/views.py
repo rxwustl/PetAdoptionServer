@@ -33,7 +33,7 @@ class MyPostsAPIView(ListCreateAPIView):
         try:
             return PetPost.objects.filter(petid=Pet.objects.get(petowner=self.request.user))
         except Pet.DoesNotExist:
-            return response.Response({}, status=status.HTTP_200_OK)
+            return PetPost.objects.none
 
 class PostsAPIView(ListCreateAPIView):
     serializer_class = PetPostSerializer
