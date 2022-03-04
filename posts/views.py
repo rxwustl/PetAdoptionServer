@@ -1,5 +1,5 @@
 from rest_framework import response, status
-from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -62,7 +62,7 @@ class FavoritesAPIView(ListAPIView):
     def get_queryset(self):
         return Favorites.objects.all()
     
-class AddFavoritesAPIView(CreateAPIView):
+class AddFavoritesAPIView(CreateAPIView, DestroyAPIView):
 
     serializer_class = FavoriteListSerializer
     permission_classes = [IsAuthenticated]
@@ -71,3 +71,10 @@ class AddFavoritesAPIView(CreateAPIView):
         postid = self.request.data.get('postid')
         post = PetPost.objects.get(postid=postid)
         return serializer.save(userid=self.request.user, postid=post)
+
+    def perform_destroy(self, instance):
+        postid = self.request.data.get('postid')
+        post = PetPost.objects.get(postid=postid)
+        user = self.request.user
+        PetPost.objects.delete(userid=self.request.user, postid=post)
+        
