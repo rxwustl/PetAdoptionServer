@@ -78,8 +78,9 @@ class RemoveFavoritesAPIView(DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
-        postid = self.request.data.get('postid')
-        post = PetPost.objects.get(postid=postid)
-        user = self.request.user
-        PetPost.objects.delete(userid=self.request.user, postid=post)
+        print(instance)
+    
+    def get_queryset(self):
+        return Favorites.objects.filter(userid=self.request.user)
+        
         
