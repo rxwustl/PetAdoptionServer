@@ -41,5 +41,8 @@ class PetPost(models.Model):
 class Favorites(models.Model):
     userid = models.ForeignKey(to=User, on_delete=models.CASCADE)
     postid = models.ForeignKey(to=PetPost, on_delete=models.CASCADE, related_name="posts")
+
+    class Meta:
+        unique_together = ('userid', 'postid',)
     
 # Create your models here.
