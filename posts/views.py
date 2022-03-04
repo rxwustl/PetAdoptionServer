@@ -84,7 +84,7 @@ class RemoveFavoritesAPIView(DestroyAPIView):
     #     return instance.delete()
 
     def delete(self, request, *args, **kwargs):
-        self.get_queryset().filter(postid=PetPost.objects.get(postid=int(self.kwargs.get('postid'))))
+        self.get_queryset().filter(postid=PetPost.objects.get(postid=int(self.kwargs.get('postid')))).delete()
         return response.Response(status.HTTP_204_NO_CONTENT)
     
     def get_queryset(self):
