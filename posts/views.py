@@ -76,7 +76,7 @@ class RemoveFavoritesAPIView(DestroyAPIView):
 
     serializer_class = FavoriteListSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = "postid"
+    lookup_field = 'postid'
 
     def perform_destroy(self, instance):
         print(instance)

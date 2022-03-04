@@ -10,6 +10,6 @@ urlpatterns = [
     path('<int:postid>', PostDetailAPIView.as_view(), name='pdetail'),
     path('favorites/<int:userid>', FavoritesAPIView.as_view(), name="favlist"),
     path('favorites/add', AddFavoritesAPIView.as_view(), name="addfav"),
-    path('favorites/remove/', RemoveFavoritesAPIView.as_view(), name="removefav"),
+    path('favorites/remove/<int:postid>', RemoveFavoritesAPIView.as_view(), name="removefav"),
     
 ]
