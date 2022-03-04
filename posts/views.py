@@ -80,7 +80,9 @@ class AddFavoritesAPIView(CreateAPIView):
 
     
     def perform_create(self, serializer):
-        serializer.save(userid=self.request.user)
+        postid = self.request.data.get('postid')
+        post = PetPost.objects.get(postid=postid)
+        serializer.save(userid=self.request.user, postid=post)
 
 class RemoveFavoritesAPIView(DestroyAPIView):
 
