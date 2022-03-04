@@ -81,7 +81,7 @@ class RemoveFavoritesAPIView(DestroyAPIView):
     lookup_field = 'postid'
 
     def perform_destroy(self, instance):
-        print(instance)
+        return instance.delete()
     
     def get_queryset(self):
         return Favorites.objects.filter(userid=self.request.user)
