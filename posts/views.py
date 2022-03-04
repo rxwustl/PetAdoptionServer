@@ -68,11 +68,19 @@ class AddFavoritesAPIView(CreateAPIView):
 
     serializer_class = FavoriteListSerializer
     permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            return response.Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
     
     def perform_create(self, serializer):
-        postid = self.request.data.get('postid')
-        post = PetPost.objects.get(postid=postid)
-        return serializer.save(userid=self.request.user, postid=post)
+        serializer.save(userid=self.request.user)
 
 class RemoveFavoritesAPIView(DestroyAPIView):
 
@@ -80,12 +88,12 @@ class RemoveFavoritesAPIView(DestroyAPIView):
     permission_classes = [IsAuthenticated]
     lookup_field = 'postid'
 
-    # def perform_destroy(self, instance):
-    #     return instance.delete()
+    def perform_destroy(self, instance):
+        return instance.delete()
 
-    def delete(self, request, *args, **kwargs):
-        self.get_queryset().filter(postid=PetPost.objects.get(postid=int(self.kwargs.get('postid')))).delete()
-        return response.Response(status.HTTP_204_NO_CONTENT)
+    # def delete(self, request, *args, **kwargs):
+    #     self.get_queryset().filter(postid=PetPost.objects.get(postid=int(self.kwargs.get('postid')))).delete()
+    #     return response.Response(status.HTTP_204_NO_CONTENT)
     
     def get_queryset(self):
         return Favorites.objects.filter(userid=self.request.user)
