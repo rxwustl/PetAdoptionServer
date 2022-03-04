@@ -86,7 +86,7 @@ class AddFavoritesAPIView(CreateAPIView):
             serializer.save(userid=self.request.user, postid=post)
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         except IntegrityError as ie:
-            return response.Response({'detail': ie}, status=status.HTTP_400_BAD_REQUEST)
+            return response.Response({'detail': str(ie)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RemoveFavoritesAPIView(DestroyAPIView):
