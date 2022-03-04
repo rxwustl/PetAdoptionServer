@@ -31,7 +31,7 @@ class MyPostsAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         try:
-            return PetPost.objects.filter(petid=Pet.objects.filter(petowner=self.request.user))
+            return PetPost.objects.filter(petid__in=Pet.objects.filter(petowner=self.request.user))
         except Pet.DoesNotExist:
             return PetPost.objects.none()
 
