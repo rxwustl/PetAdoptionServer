@@ -5,8 +5,10 @@ from .models import User
 class RegisterSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(max_length=128, write_only=True)
+    displayname = serializers.CharField(max_length=128, required=False)
 
     def create(self, validated_data):
+        print(validated_data)
         return User.objects.create_user(**validated_data)
 
     class Meta:
