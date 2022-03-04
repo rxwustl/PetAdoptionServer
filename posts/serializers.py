@@ -44,6 +44,7 @@ class FavoriteListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorites
         fields = ('posts', 'postid',)
+        lookup_field = 'userid'
         depth = 2
         write_only_fields = ['postid']
 

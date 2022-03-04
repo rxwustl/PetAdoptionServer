@@ -30,7 +30,7 @@ class MyPostsAPIView(ListCreateAPIView):
         return serializer.save(petid=pet)
 
     def get_queryset(self):
-        return PetPost.objects.get_queryset()
+        return PetPost.objects.filter(userid=self.request.user)
 
 class PostsAPIView(ListCreateAPIView):
     serializer_class = PetPostSerializer
@@ -79,7 +79,7 @@ class RemoveFavoritesAPIView(DestroyAPIView):
     lookup_field = 'postid'
 
     def perform_destroy(self, instance):
-        print(instance)
+        instance.delete()
     
     def get_queryset(self):
         return Favorites.objects.filter(userid=self.request.user)
