@@ -2,11 +2,13 @@ from rest_framework import response, status
 from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.db.utils import IntegrityError
 
 from posts.parsers import MultipartPostParser
 from .models import Favorites, Pet, PetPost
 
 from .serializers import FavoriteListSerializer, PetPostSerializer, PetSerializer, QueryPostSerializer
+from posts import serializers
 
 
 class MyPetAPIView(ListCreateAPIView):
@@ -72,9 +74,7 @@ class AddFavoritesAPIView(CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return self.perform_create(serializer)
         else:
             return response.Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
@@ -82,7 +82,12 @@ class AddFavoritesAPIView(CreateAPIView):
     def perform_create(self, serializer):
         postid = self.request.data.get('postid')
         post = PetPost.objects.get(postid=postid)
-        serializer.save(userid=self.request.user, postid=post)
+        try:
+            serializer.save(userid=self.request.user, postid=post)
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        except IntegrityError as ie:
+            return response.Response({'detail': ie}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class RemoveFavoritesAPIView(DestroyAPIView):
 
