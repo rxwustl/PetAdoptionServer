@@ -30,7 +30,10 @@ class MyPostsAPIView(ListCreateAPIView):
         return serializer.save(petid=pet)
 
     def get_queryset(self):
-        return PetPost.objects.filter(petid=Pet.objects.get(petowner=self.request.user))
+        try:
+            return PetPost.objects.filter(petid=Pet.objects.get(petowner=self.request.user))
+        except Pet.DoesNotExist:
+            return response.Response({}, status=status.HTTP_200_OK)
 
 class PostsAPIView(ListCreateAPIView):
     serializer_class = PetPostSerializer
