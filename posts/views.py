@@ -60,10 +60,9 @@ class FavoritesAPIView(ListAPIView):
 
     serializer_class = FavoriteListSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = 'userid'
 
     def get_queryset(self):
-        return Favorites.objects.all()
+        return Favorites.objects.filter(userid=self.request.user)
     
 class AddFavoritesAPIView(CreateAPIView):
 
@@ -82,7 +81,7 @@ class RemoveFavoritesAPIView(DestroyAPIView):
     lookup_field = 'postid'
 
     def perform_destroy(self, instance):
-        instance.delete()
+        print(instance)
     
     def get_queryset(self):
         return Favorites.objects.filter(userid=self.request.user)
