@@ -62,7 +62,7 @@ class FavoritesAPIView(ListAPIView):
     def get_queryset(self):
         return Favorites.objects.all()
     
-class AddFavoritesAPIView(CreateAPIView, DestroyAPIView):
+class AddFavoritesAPIView(CreateAPIView):
 
     serializer_class = FavoriteListSerializer
     permission_classes = [IsAuthenticated]
@@ -71,6 +71,11 @@ class AddFavoritesAPIView(CreateAPIView, DestroyAPIView):
         postid = self.request.data.get('postid')
         post = PetPost.objects.get(postid=postid)
         return serializer.save(userid=self.request.user, postid=post)
+
+class RemoveFavoritesAPIView(DestroyAPIView):
+
+    serializer_class = FavoriteListSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
         postid = self.request.data.get('postid')
