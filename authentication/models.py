@@ -18,10 +18,11 @@ class PetUserManager(UserManager):
             raise ValueError('The given password must be set')
         print(email)
         email = self.normalize_email(email)
+        print(email)
         # Lookup the real model class from the global app registry so this
         # manager method can be used in migrations. This is fine because
         # managers are by definition working on the real model.
-        user = self.model(email, **extra_fields)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
