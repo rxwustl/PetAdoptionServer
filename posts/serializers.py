@@ -8,6 +8,7 @@ class PetSerializer(serializers.ModelSerializer):
         model = Pet
         fields = [
             "petname",
+            "gender",
             "pettype",
             "breed",
             "age_year",

@@ -17,7 +17,14 @@ class Pet(models.Model):
         (CAT, 'Cat'),
         (DOG, 'Dog')
     ]
+    MALE = 'M'
+    FEMALE = 'F'
+    GENDER_TYPE_CHOICES = [
+        (MALE, 'M'),
+        (FEMALE, 'F')
+    ]
     petid = models.AutoField(primary_key=True)
+    gender = models.CharField(choices=GENDER_TYPE_CHOICES, max_length=2, blank=False, default='M')
     petname = models.CharField(max_length=64, blank=False)
     pettype = models.CharField(choices=PET_TYPE_CHOICES, max_length=4, blank=False)
     breed = models.CharField(max_length=128)
