@@ -8,8 +8,6 @@ from django.conf import settings
 class JWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
         header = get_authorization_header(request)
-        print(request)
-        print(header)
         content = header.decode('utf-8')
         if len(content.split(' ')) == 2:
             token = content.split(' ')[1]

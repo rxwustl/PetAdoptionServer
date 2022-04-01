@@ -1,9 +1,49 @@
 from rest_framework import response, status, permissions
 from django.shortcuts import render
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from django.contrib.auth import authenticate
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
+from django_filters.rest_framework import DjangoFilterBackend
 
-from .serializer import LoginSerializer, RegisterSerializer
+from authentication.models import User, UserProfilePhoto
+from posts import serializers
+
+from .serializer import LoginSerializer, ProfilePhotoSerializer, RegisterSerializer
+
+
+class GetUserAPIView(GenericAPIView):
+
+    authentication_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return User.objects.get(userid=self.request.data['userid'])
+
+class UserPhoto(ListCreateAPIView):
+
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+    serializer_class = ProfilePhotoSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['userid']
+
+    def get_queryset(self):
+        return UserProfilePhoto.objects
+
+    
+    def post(self, request):
+        print(request.data)
+        serializer = self.serializer_class(data={
+            'userid': request.user.userid,
+            'profilePhoto': request.data['photo'] 
+        })
+        if serializer.is_valid():
+            serializer.save(userid=request.user, profilePhoto=request.data['photo'])
+            return response.Response(serializer.data, status.HTTP_201_CREATED)
+        else:
+            return response.Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        pass
+
 
 
 class RegisterAPIView(GenericAPIView):
@@ -19,9 +59,6 @@ class RegisterAPIView(GenericAPIView):
             return response.Response(serializer.data, status.HTTP_201_CREATED)
         else:
             return response.Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        pass
-
-    pass
 
 
 class LoginAPIView(GenericAPIView):

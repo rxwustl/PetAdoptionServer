@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager, AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -16,9 +17,7 @@ class PetUserManager(UserManager):
             raise ValueError('The given email must be set')
         if not password:
             raise ValueError('The given password must be set')
-        print(email)
         email = self.normalize_email(email)
-        print(email)
         # Lookup the real model class from the global app registry so this
         # manager method can be used in migrations. This is fine because
         # managers are by definition working on the real model.
@@ -51,10 +50,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     userid = models.AutoField(primary_key=True)
     full_name = models.CharField(_('full_name'), max_length=150, blank=False, default="")
     displayname = models.CharField(_('displayname'), max_length=150, blank=True, default="")
-    addressLine = models.CharField(max_length=256)
-    zipcode = models.CharField(max_length=6)
-    state = models.CharField(max_length=2)
-    city = models.CharField(max_length=64, default='')
+    latitude = models.FloatField(_('latitude'), blank=False, default=0)
+    longitude = models.FloatField(_('longitude'), blank=False, default=0)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
@@ -88,6 +85,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         return token
 
     objects = PetUserManager()
-        
 
 
+
+def upload_to(instance, filename):
+    filename = filename.split('.')
+    filename = filename[0] + '_' + uuid.uuid4().hex + '.' + filename[1]
+    return 'profile/{filename}'.format(filename=filename)  
+
+class UserProfilePhoto(models.Model):
+    userid = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="user")
+    profilePhoto = models.ImageField(upload_to=upload_to, default="default.jpeg")
+    pass

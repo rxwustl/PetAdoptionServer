@@ -11,10 +11,11 @@ class MultipartPostParser(parsers.MultiPartParser):
             parser_context=parser_context
         )
         data = {}
-        data['petid_id'] = int(result.data['petid'])
+        data['petid'] = int(result.data['petid'])
         data['desc'] = result.data['desc']
         # find the data field and parse it
         data = json.loads(json.dumps(data))
         qdict = QueryDict('', mutable=True)
         qdict.update(data)
+        print(parsers.DataAndFiles(qdict, result.files).files)
         return parsers.DataAndFiles(qdict, result.files)

@@ -1,14 +1,17 @@
+import imp
 from rest_framework import response, status
 from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.filters import SearchFilter
 from django.db.utils import IntegrityError
+from posts.filters import PostFilter
 
 from posts.parsers import MultipartPostParser
 from .models import Favorites, Pet, PetPost
-
 from .serializers import FavoriteListSerializer, PetPostSerializer, PetSerializer, QueryPostSerializer
 from posts import serializers
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class MyPetAPIView(ListCreateAPIView):
@@ -28,7 +31,7 @@ class MyPostsAPIView(ListCreateAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
-        print(self.request)
+        # print(self.request.data['petimages'])
         pet = Pet.objects.get(petid=int(self.request.data['petid']))
         return serializer.save(petid=pet)
 
@@ -38,13 +41,18 @@ class MyPostsAPIView(ListCreateAPIView):
         except Pet.DoesNotExist:
             return PetPost.objects.none()
 
+
 class PostsAPIView(ListCreateAPIView):
     serializer_class = PetPostSerializer
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
+    filterset_class = PostFilter
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['petid__petname', 'desc', 'petid__breed']
 
     def get_queryset(self):
         return PetPost.objects.get_queryset()
+
 
 class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = QueryPostSerializer
@@ -67,6 +75,7 @@ class FavoritesAPIView(ListAPIView):
     def get_queryset(self):
         return Favorites.objects.filter(userid=self.request.user)
     
+
 class AddFavoritesAPIView(CreateAPIView):
 
     serializer_class = FavoriteListSerializer

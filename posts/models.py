@@ -32,7 +32,7 @@ class Pet(models.Model):
     age_month = models.IntegerField(blank=False)
     birthday = models.DateField()
     neutered = models.BooleanField()
-    petowner = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    petowner = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="petowner")
 
 
 class PetPost(models.Model):
@@ -44,6 +44,13 @@ class PetPost(models.Model):
     image = models.ImageField(
         _("Image"), upload_to=upload_to, default='posts/default.jpg')
     pass
+
+
+# class PetPostImages(models.Model):
+#     postid = models.ForeignKey(to=PetPost, related_name="post", on_delete=models.CASCADE)
+#     image = models.ImageField(
+#         _("Image"), upload_to=upload_to, default='posts/default.jpg')
+
 
 class Favorites(models.Model):
     userid = models.ForeignKey(to=User, on_delete=models.CASCADE)

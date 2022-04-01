@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, UserProfilePhoto
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('password', 'email', 'full_name', 'displayname', 'addressLine', 'zipcode', 'state', 'city')
+        fields = ('password', 'email', 'full_name', 'displayname', 'longitude', 'latitude')
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -24,3 +24,18 @@ class LoginSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'password', 'token')
         read_only_fields = ['token']
+
+class ProfilePhotoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserProfilePhoto
+        fields = ('userid', 'profilePhoto')
+
+class QueryUserSerializer(serializers.ModelSerializer):
+
+    userid = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('userid', 'password', 'email', 'full_name', 'displayname', 'longitude', 'latitude')
+        # read_only_fields = ['password', 'email', 'full_name', 'displayname', 'addressLine', 'zipcode', 'state', 'city']
