@@ -31,7 +31,7 @@ class MyPostsAPIView(ListCreateAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
-        print(self.request.data['image'])
+        # print(self.request.data['image'])
         pet = Pet.objects.get(petid=int(self.request.data['petid']))
         return serializer.save(petid=pet)
 
