@@ -1,4 +1,4 @@
-import imp
+import math
 from rest_framework import response, status
 from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -6,6 +6,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.filters import SearchFilter
 from django.db.utils import IntegrityError
 from posts.filters import PostFilter
+from django.db.models import F, Value, FloatField, ExpressionWrapper
 
 from posts.parsers import MultipartPostParser
 from .models import Favorites, Pet, PetPost
@@ -51,7 +52,12 @@ class PostsAPIView(ListCreateAPIView):
     search_fields = ['petid__petname', 'desc', 'petid__breed']
 
     def get_queryset(self):
-        return PetPost.objects.get_queryset()
+        return PetPost.objects.get_queryset().annotate(dist=ExpressionWrapper(
+                    (F('petid__petowner__latitude') - self.request.user.latitude) ** 2 +
+                    (F('petid__petowner__longitude') - self.request.user.longitude) ** 2,
+                    output_field=FloatField()
+                )
+            ).order_by('dist')
 
 
 class PostDetailAPIView(RetrieveUpdateDestroyAPIView):
