@@ -22,8 +22,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'password', 'token')
-        read_only_fields = ['token']
+        fields = ('email', 'password', 'token', 'userid', 'full_name')
+        read_only_fields = ['token', 'userid', 'full_name']
 
 class ProfilePhotoSerializer(serializers.ModelSerializer):
 
