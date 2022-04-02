@@ -1,3 +1,4 @@
+from email.policy import default
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager, AbstractBaseUser, PermissionsMixin
@@ -45,6 +46,13 @@ class PetUserManager(UserManager):
     pass
 
 
+
+def upload_to(instance, filename):
+    filename = filename.split('.')
+    filename = filename[0] + '_' + uuid.uuid4().hex + '.' + filename[1]
+    return 'profile/{filename}'.format(filename=filename)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), blank=False, unique=True)
     userid = models.AutoField(primary_key=True)
@@ -52,6 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     displayname = models.CharField(_('displayname'), max_length=150, blank=True, default="")
     latitude = models.FloatField(_('latitude'), blank=False, default=0)
     longitude = models.FloatField(_('longitude'), blank=False, default=0)
+    profilePhoto = models.ImageField(_('profilePhoto'), blank=True, default=None, upload_to=upload_to)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
@@ -84,14 +93,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         )
         return token
 
-    objects = PetUserManager()
-
-
-
-def upload_to(instance, filename):
-    filename = filename.split('.')
-    filename = filename[0] + '_' + uuid.uuid4().hex + '.' + filename[1]
-    return 'profile/{filename}'.format(filename=filename)  
+    objects = PetUserManager()  
 
 class UserProfilePhoto(models.Model):
     userid = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="user")

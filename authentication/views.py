@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
+from uritemplate import partial
 
 from authentication.models import User, UserProfilePhoto
 from posts import serializers
@@ -24,25 +25,36 @@ class UserPhoto(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
     serializer_class = ProfilePhotoSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['userid']
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ['userid']
 
     def get_queryset(self):
-        return UserProfilePhoto.objects
-
+        return User.objects.filter(userid=self.request.user.userid)
     
     def post(self, request):
-        print(request.data)
-        serializer = self.serializer_class(data={
+        # print(request.data)
+        # serializer = self.serializer_class(data={
+        #     'userid': request.user.userid,
+        #     'profilePhoto': request.data['photo'] 
+        # })
+        # if serializer.is_valid():
+        #     serializer.save(userid=request.user, profilePhoto=request.data['photo'])
+        #     return response.Response(serializer.data, status.HTTP_201_CREATED)
+        # else:
+        #     return response.Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        # pass
+        photo = request.data['photo']
+        serializer = self.serializer_class(request.user, data={
             'userid': request.user.userid,
-            'profilePhoto': request.data['photo'] 
-        })
+            'profilePhoto': photo
+        }, partial=True)
         if serializer.is_valid():
-            serializer.save(userid=request.user, profilePhoto=request.data['photo'])
-            return response.Response(serializer.data, status.HTTP_201_CREATED)
+            # serializer.update(instance=request.user, validated_data=serializer.validated_data)
+            serializer.save()
+            return response.Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         else:
-            return response.Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        pass
+            return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # User.objects.filter(userid=request.user.userid).update(profilePhoto=photo)
 
 
 

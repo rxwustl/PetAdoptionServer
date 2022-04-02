@@ -22,13 +22,13 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'password', 'token', 'userid', 'full_name')
-        read_only_fields = ['token', 'userid', 'full_name']
+        fields = ('email', 'password', 'token', 'userid', 'full_name', 'profilePhoto')
+        read_only_fields = ['token', 'userid', 'full_name', 'profilePhoto']
 
 class ProfilePhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = UserProfilePhoto
+        model = User
         fields = ('userid', 'profilePhoto')
 
 class QueryUserSerializer(serializers.ModelSerializer):
