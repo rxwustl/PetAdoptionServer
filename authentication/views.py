@@ -1,5 +1,3 @@
-from email.policy import HTTP
-from itsdangerous import Serializer
 from rest_framework import response, status, permissions
 from django.shortcuts import render
 from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
