@@ -23,6 +23,14 @@ class Pet(models.Model):
         (MALE, 'M'),
         (FEMALE, 'F')
     ]
+    SHORT = 'S'
+    MEDIUM = 'M'
+    LONG = 'L'
+    HAIR_LENGTH_CHOICES = [
+        (SHORT, 'S'),
+        (MEDIUM, 'M'),
+        (LONG, 'L')
+    ]
     petid = models.AutoField(primary_key=True)
     gender = models.CharField(choices=GENDER_TYPE_CHOICES, max_length=2, blank=False, default='M')
     petname = models.CharField(max_length=64, blank=False)
@@ -32,6 +40,8 @@ class Pet(models.Model):
     age_month = models.IntegerField(blank=False)
     birthday = models.DateField()
     neutered = models.BooleanField()
+    weight = models.FloatField(default=10)
+    hairlength = models.CharField(choices=HAIR_LENGTH_CHOICES, default='M', max_length=4)
     petowner = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="petowner")
 
 

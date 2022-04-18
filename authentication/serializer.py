@@ -34,8 +34,9 @@ class ProfilePhotoSerializer(serializers.ModelSerializer):
 class QueryUserSerializer(serializers.ModelSerializer):
 
     userid = serializers.IntegerField(write_only=True)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ('userid', 'password', 'email', 'full_name', 'displayname', 'longitude', 'latitude')
+        fields = ('userid', 'email', 'full_name', 'displayname', 'longitude', 'latitude', 'profilePhoto', 'password')
         # read_only_fields = ['password', 'email', 'full_name', 'displayname', 'addressLine', 'zipcode', 'state', 'city']

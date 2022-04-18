@@ -1,4 +1,3 @@
-import math
 from rest_framework import response, status
 from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -31,8 +30,22 @@ class MyPostsAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
+    # def create(self, request):
+    #     # print(self.request.data['image'])
+    #     pet = Pet.objects.get(petid=int(self.request.data['petid']))
+    #     pet_serializer = PetSerializer(instance=pet)
+    #     post_serializer = self.serializer_class(data={
+    #         'petid': pet_serializer.data,
+    #         'desc': request.data['desc'],
+    #         'image': request.data['image']
+    #     }, partial=True)
+    #     if post_serializer.is_valid():
+    #         post_serializer.save()
+    #         return response.Response(data=post_serializer.data, status=status.HTTP_201_CREATED)
+    #     else:
+    #         return response.Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def perform_create(self, serializer):
-        # print(self.request.data['image'])
         pet = Pet.objects.get(petid=int(self.request.data['petid']))
         return serializer.save(petid=pet)
 

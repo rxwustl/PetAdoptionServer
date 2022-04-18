@@ -1,26 +1,29 @@
 from rest_framework import response, status, permissions
 from django.shortcuts import render
-from rest_framework.generics import GenericAPIView, ListCreateAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
-from uritemplate import partial
 
 from authentication.models import User, UserProfilePhoto
 from posts import serializers
 
-from .serializer import LoginSerializer, ProfilePhotoSerializer, RegisterSerializer
+from .serializer import LoginSerializer, ProfilePhotoSerializer, RegisterSerializer, QueryUserSerializer
 
 
-class GetUserAPIView(GenericAPIView):
+class UserAPIView(RetrieveAPIView, UpdateAPIView):
 
-    authentication_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        return User.objects.get(userid=self.request.data['userid'])
+    def retrieve(self, request):
+        serializer = QueryUserSerializer(instance=request.user)
+        return response.Response(data=serializer.data, status=status.HTTP_200_OK)
+    
+    
+        # return User.objects.get(userid=self.request.data['userid'])
 
-class UserPhoto(ListCreateAPIView):
+class UserPhoto(CreateAPIView, RetrieveAPIView):
 
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
@@ -28,8 +31,16 @@ class UserPhoto(ListCreateAPIView):
     # filter_backends = [DjangoFilterBackend]
     # filterset_fields = ['userid']
 
-    def get_queryset(self):
-        return User.objects.filter(userid=self.request.user.userid)
+    def retrieve(self, request):
+        instance = User.objects.get(userid=self.request.user.userid)
+        serializer = ProfilePhotoSerializer(data={
+            "email": instance.email,
+            "profilePhoto": instance.profilePhoto
+        })
+        if serializer.is_valid():
+            return response.Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def post(self, request):
         # print(request.data)
