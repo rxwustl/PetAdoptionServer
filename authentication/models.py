@@ -99,3 +99,15 @@ class UserProfilePhoto(models.Model):
     userid = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="user")
     profilePhoto = models.ImageField(upload_to=upload_to, default="default.jpeg")
     pass
+
+
+class UserPreference(models.Model):
+    userid = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='pref_user', unique=True)
+    pettype = models.CharField(max_length=4, default='CAT')
+    age = models.IntegerField(default=0)
+    breed = models.CharField(default="", max_length=64)
+    gender = models.CharField(default='N', max_length=4)
+    hairlength = models.CharField(default='N', max_length=4)
+    weight = models.FloatField(default=0)
+    
+

@@ -1,5 +1,6 @@
+from dataclasses import fields
 from rest_framework import serializers
-from .models import User, UserProfilePhoto
+from .models import User, UserPreference, UserProfilePhoto
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -40,3 +41,30 @@ class QueryUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('userid', 'email', 'full_name', 'displayname', 'longitude', 'latitude', 'profilePhoto', 'password')
         # read_only_fields = ['password', 'email', 'full_name', 'displayname', 'addressLine', 'zipcode', 'state', 'city']
+
+class UserPrefSerializer(serializers.ModelSerializer):
+
+    # userid = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = UserPreference
+        fields = ('pettype', 'age', 'breed', 'gender', 'hairlength', 'weight')
+        lookup_field = 'userid'
+    
+class UpdateProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('full_name')
+
+class UpdateLocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('longitude', 'latitude')
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('password')

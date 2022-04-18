@@ -1,27 +1,91 @@
+from email.policy import HTTP
+from itsdangerous import Serializer
 from rest_framework import response, status, permissions
 from django.shortcuts import render
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
 
-from authentication.models import User, UserProfilePhoto
+from authentication.models import User, UserProfilePhoto, UserPreference
 from posts import serializers
 
-from .serializer import LoginSerializer, ProfilePhotoSerializer, RegisterSerializer, QueryUserSerializer
+from .serializer import LoginSerializer, ProfilePhotoSerializer, RegisterSerializer, QueryUserSerializer, UpdateProfileSerializer, UserPrefSerializer
 
 
-class UserAPIView(RetrieveAPIView, UpdateAPIView):
+class UserAPIView(RetrieveAPIView, DestroyAPIView):
 
     permission_classes = [IsAuthenticated]
+    serializer_class = QueryUserSerializer
+    lookup_field = 'userid'
 
     def retrieve(self, request):
         serializer = QueryUserSerializer(instance=request.user)
         return response.Response(data=serializer.data, status=status.HTTP_200_OK)
     
+    def destroy(self, request, *args, **kwargs):
+        User.objects.filter(userid=self.request.user.userid).delete()
+        return response.Response(data={}, status=status.HTTP_204_NO_CONTENT)
+    
     
         # return User.objects.get(userid=self.request.data['userid'])
+
+class UpdateProfileAPIView(UpdateAPIView):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = UpdateProfileSerializer
+
+    def update(self, request, *args, **kwargs):
+        try:
+            User.objects.filter(userid=self.request.user.userid).update(full_name=self.request.data['full_name'])
+            return response.Response({'message': 'success'}, status=status.HTTP_201_CREATED)
+        except:
+            return response.Response({'message': 'error'}, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateLocationAPIView(UpdateAPIView):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = UpdateProfileSerializer
+
+    def update(self, request, *args, **kwargs):
+        try:
+            User.objects.filter(userid=self.request.user.userid).update(latitude=self.request.data['latitude'], longitude=self.request.data['longitude'])
+            return response.Response({'message': 'success'}, status=status.HTTP_201_CREATED)
+        except:
+            return response.Response({'message': 'error'}, status=status.HTTP_400_BAD_REQUEST)
+
+class UserPreferenceAPIView(CreateAPIView, RetrieveAPIView, UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserPrefSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            return self.perform_create(serializer)
+        else:
+            return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save(userid=self.request.user)
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def retrieve(self, request, *args, **kwargs):
+        pref = UserPreference.objects.get(userid=request.user.userid)
+        serializer = self.serializer_class(instance=pref)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.update(instance=UserPreference.objects.get(userid=self.request.user), validated_data=request.data)
+            return response.Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # return super().partial_update(request, *args, **kwargs)
+    
+
+
 
 class UserPhoto(CreateAPIView, RetrieveAPIView):
 
