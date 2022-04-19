@@ -55,7 +55,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('full_name')
+        fields = ('full_name',)
 
 class UpdateLocationSerializer(serializers.ModelSerializer):
 
@@ -67,4 +67,4 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('password')
+        fields = ('password',)
