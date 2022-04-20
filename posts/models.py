@@ -56,12 +56,6 @@ class PetPost(models.Model):
     pass
 
 
-# class PetPostImages(models.Model):
-#     postid = models.ForeignKey(to=PetPost, related_name="post", on_delete=models.CASCADE)
-#     image = models.ImageField(
-#         _("Image"), upload_to=upload_to, default='posts/default.jpg')
-
-
 class Favorites(models.Model):
     userid = models.ForeignKey(to=User, on_delete=models.CASCADE)
     postid = models.ForeignKey(to=PetPost, on_delete=models.CASCADE, related_name="posts")

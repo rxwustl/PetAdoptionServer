@@ -48,7 +48,7 @@ class UserPrefSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserPreference
-        fields = ('pettype', 'age', 'breed', 'gender', 'hairlength', 'weight')
+        fields = ('pettype', 'age', 'gender', 'hairlength', 'weight')
         lookup_field = 'userid'
     
 class UpdateProfileSerializer(serializers.ModelSerializer):

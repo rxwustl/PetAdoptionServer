@@ -103,11 +103,10 @@ class UserProfilePhoto(models.Model):
 
 class UserPreference(models.Model):
     userid = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='pref_user', unique=True)
-    pettype = models.CharField(max_length=4, default='CAT')
-    age = models.IntegerField(default=0)
-    breed = models.CharField(default="", max_length=64)
+    pettype = models.CharField(max_length=4, default='N')
+    age = models.CharField(default="N", max_length=4)
     gender = models.CharField(default='N', max_length=4)
     hairlength = models.CharField(default='N', max_length=4)
-    weight = models.FloatField(default=0)
+    weight = models.CharField(default="N", max_length=4)
     
 

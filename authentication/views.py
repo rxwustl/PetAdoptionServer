@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from authentication.models import User, UserProfilePhoto, UserPreference
 from posts import serializers
 
-from .serializer import LoginSerializer, ProfilePhotoSerializer, RegisterSerializer, QueryUserSerializer, UpdateProfileSerializer, UserPrefSerializer
+from .serializer import LoginSerializer, ProfilePhotoSerializer, RegisterSerializer, QueryUserSerializer, UpdateProfileSerializer, UserPrefSerializer, UpdateLocationSerializer
 
 
 class UserAPIView(RetrieveAPIView, DestroyAPIView):
@@ -44,7 +44,7 @@ class UpdateProfileAPIView(UpdateAPIView):
 class UpdateLocationAPIView(UpdateAPIView):
 
     permission_classes = [IsAuthenticated]
-    serializer_class = UpdateProfileSerializer
+    serializer_class = UpdateLocationSerializer
 
     def update(self, request, *args, **kwargs):
         try:
